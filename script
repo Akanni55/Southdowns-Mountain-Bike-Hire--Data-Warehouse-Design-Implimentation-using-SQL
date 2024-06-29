@@ -1,0 +1,178 @@
+--Creating Database
+CREATE DATABASE SdmBikeHire;
+
+--Creating my Tables
+CREATE TABLE [CUSTOMER] (
+  [CustomerID] INT PRIMARY KEY,
+  [Name] VARCHAR(MAX),
+  [Address] VARCHAR(MAX),
+  [DateOfBirth] DATE,
+  [PhotoIDType] VARCHAR(MAX),
+  [TelephoneNumber] NVARCHAR(15),
+  [Postcode] NVARCHAR(10)
+);
+
+CREATE TABLE [BIKE] (
+  [BikeID] INT PRIMARY KEY,
+  [Type] VARCHAR(255),
+  [UniqueFrameNumber] VARCHAR(255),
+  [ServiceHistory] VARCHAR(MAX),
+  [OverallCondition] VARCHAR(255),
+  [CostPerDay(High Season)] DECIMAL(10,2),
+  [CostPerDay(Low Season)] DECIMAL(10,2),
+  [CurrentLocation] VARCHAR(255)
+);
+
+CREATE TABLE [EMERGENCY_REPAIR] (
+  [RepairID] INT PRIMARY KEY,
+  [BikeID] INT,
+  [RepairDetails] VARCHAR(MAX),
+  [ReplacementBikeIssued] BIT,
+  [WTTHolidayNumber] VARCHAR(50),
+  CONSTRAINT [FK_EmergencyRepair_Bike]
+    FOREIGN KEY ([BikeID])
+      REFERENCES [BIKE]([BikeID])
+);
+
+CREATE TABLE [BOOKING] (
+  [BookingID] INT PRIMARY KEY,
+  [CustomerID] INT,
+  [BikeID] INT,
+  [TotalPaid] DECIMAL(10,2),
+  [ReturnStatus] VARCHAR(50),
+  [ReturnReceivedBy] VARCHAR(255),
+  [StartDate] DATE,
+  [EndDate] DATE,
+  [BookingType] VARCHAR(50),
+  CONSTRAINT [FK_Booking_Customer]
+    FOREIGN KEY ([CustomerID])
+      REFERENCES [CUSTOMER]([CustomerID]),
+  CONSTRAINT [FK_Booking_Bike]
+    FOREIGN KEY ([BikeID])
+      REFERENCES [BIKE]([BikeID])
+);
+
+CREATE TABLE [LOCATION] (
+  [LocationID] INT PRIMARY KEY,
+  [BikeID] INT,
+  [Date] DATE,
+  [PickUpLocation] VARCHAR(255),
+  [ReturnLocation] VARCHAR(255),
+  CONSTRAINT [FK_Location_Bike]
+    FOREIGN KEY ([BikeID])
+      REFERENCES [BIKE]([BikeID])
+);
+
+--Inputing Values into Tables
+INSERT INTO CUSTOMER (CustomerID, Name, Address, DateOfBirth, PhotoIDType, TelephoneNumber, Postcode)
+VALUES
+  (101, 'Oluwafemi', '6 Framfield', '2000-12-09', 'BRP', '07868398573', 'BN1 9GT'),
+  (102, 'Jennie Harding', '206 cockroft Moulsecomb', '1950-09-08', 'Passport', '07721671086', 'BN1 8PT'),
+  (103, 'Ife Amao', '20 adeola street, 9 coldean lane', '1980-12-25', 'Drivers License', '07701243158', 'BN2 8TY'),
+  (104, 'Kolawole Tunde', '206 Moulsecomb', '1950-05-05', 'BRP', '08035754430', 'BN3 7HG'),
+  (105, 'Titilayo Yinka', '56 coldean lane', '1998-05-05', 'StundetID', '08034454430', 'BN4 7HG'),
+  (106, 'Karl Marx', '3 Coldstone Road', '1990-04-17', 'BRP', '07435688778', 'BN3 5TP'),
+  (107, 'Barrack Obama', '64 Churchill SQ', '2000-08-06', 'StundetID', '09935609888', 'BN4 9BX'),
+  (108, 'Feranmi Tolulope', '55 Lewes Road', '1999-05-25', 'StundetID', '08034482571', 'BN1 6GT'),
+  (109, 'Aboluwarin Ajala', '24 Churchill SQ', '2001-11-07', 'Passport', '07701243133', 'BN1 6GQ'),
+  (110, 'Moboluwduro Akala', '39 Coldstone Road', '2001-11-11', 'Passport', '07700240133', 'BN1 9OP'),
+  (111, 'Mayowa Amao', '40 Coldstone Highway', '2000-01-20', 'BRP', '07700887692', 'N1 9OP'),
+  (112, 'Segun Abe', '66 Moulsecomb', '2004-12-16', 'BRP', '07701243133', 'BN3 6GT'),
+  (113, 'Bukunmi Ade', '66 Grays', '2000-12-04', 'Passport', '09026609966', 'BN2 9GY'),
+  (114, 'Adegoke Olutola', '2 Ashi', '1999-02-24', 'StundetID', '07721212086', 'BN1 9OP'),
+  (115, 'Mofe Agboyin', '12 Hollinbury', '2000-05-14', 'StundetID', '09435687692', 'BN4 9OP'),
+  (116, 'Ibukun Dare', '78 Moulsecomb', '1995-05-05', 'Passport', '09665687092', 'BN2 9KK'),
+  (117, 'Daniel Ogundiran', '2 Hollinbury', '2002-06-17', 'StundetID', '08435007692', 'BN2 8HP'),
+  (118, 'Bowo Oyodele', '50 coldean lane', '1895-03-18', 'Passport', '09908687692', 'BN1 8OP'),
+  (119, 'Victor Adesoye', '123 Hollinbury', '1995-09-09', 'BRP', '09435688888', 'BN3 7OP'),
+  (120, 'John Doe', '10 Hollinbury', '2001-08-09', 'StundetID', '08435667222', 'BN0 987'),
+  (121, 'Karl Marx', '3 Coldstone Road', '1997-04-19', 'BRP', '07435688778', 'BN3 5TP'),
+  (122, 'Barrack Obama', '64 Churchill SQ', '2000-08-29', 'StundetID', '09935609888', 'BN4 9BX');
+  
+INSERT INTO BIKE (BikeID, Type, UniqueFrameNumber, ServiceHistory, OverallCondition, [CostPerDay(High Season)], [CostPerDay(Low Season)], CurrentLocation)
+VALUES
+  (1, 'Hardtail', 'UFN01', 'Regular Tune-up and Inspection, Brake Adjustment', 'Good', 40, 30, 'Eastbourne Center'),
+  (2, 'Full suspension', 'UFN02', 'Brake Adjustment', 'Excellent', 50,40, 'Winchester Center'),
+  (3, 'Full suspension', 'UFN03', 'Pedal Check and Replacement', 'Bad', 50,40, 'Under Repair'),
+  (4, 'Full suspension', 'UFN04', 'Tire Replacement', 'Good', 50,40, 'In Transit'),
+  (5, 'Hardtail', 'UFN05', 'Regular Tune-up and Inspection',  'Excellent', 40, 30, 'Eastbourne Center'),
+  (6, 'Hardtail', 'UFN06', 'Regular Tune-up and Inspection', 'Good', 40, 30, 'Under Repair'),
+  (7, 'Full suspension', 'UFN07', 'Handlebar and Seat Adjustment', 'Good',50,40, 'Winchester Center'),
+  (8, 'Hardtail', 'UFN08', 'Tire Replacement',  'Excellent', 40, 30, 'In Transit'),
+  (9, 'Hardtail', 'UFN09', 'Pedal Check and Replacement', 'Good', 40, 30, 'Winchester Center'),
+  (10, 'Full suspension', 'UFN10', 'Tire Replacement', 'Excellent', 50,40, 'In Transit'),
+  (11, 'Hardtail', 'UFN11', 'Brake Adjustment',  'Excellent', 40, 30, 'Eastbourne Center'),
+  (12, 'Full suspension', 'UFN12', 'Accessory Installation', 'Excellent', 50,40, 'Under Repair'),
+  (13, 'Hardtail', 'UFN13', 'Frame Inspection and Maintenance', 'Excellent', 40, 30, 'Winchester Center'),
+  (14, 'Full suspension', 'UFN14', 'Tire Replacement', 'Bad', 50,40, 'Eastbourne Center'),
+  (15, 'Hardtail', 'UFN1', 'Brake Adjustment', 'Bad', 40, 30, 'Winchester Center');
+
+INSERT INTO EMERGENCY_REPAIR (RepairID, BikeID, RepairDetails, ReplacementBikeIssued, WTTHolidayNumber)
+VALUES
+  (121, 1, 'Brake Pad Replacement', 1, 'WTT1234'),
+  (122, 2, 'Tire Patching', 0, 'WTT1334'),
+  (123, 3, 'Gear Shifter Cable Repair', 1, NULL),
+  (124, 4, 'Handlebar Grips Replacement', 0, 'WTT1534'),
+  (125, 5, 'Seat Adjustment', 0, 'WTT1634'),
+  (126, 6, 'Frame Welding', 1, NULL),
+  (127, 7, 'Chain Replacement', 1, NULL),
+  (128, 8, 'Puncture Repair', 0, NULL),
+  (129, 9, 'Suspension Fork Repair', 1, NULL),
+  (130, 10, 'Tire Patching', 1, NULL),
+  (131, 11, 'Handlebar Grips Replacement', 0, NULL),
+  (132, 12, 'Gear Shifter Cable Repair', 1, 'WTT1054'),
+  (133, 13, 'Brake Pad Replacement', 1, NULL),
+  (134, 14, 'Seat Adjustment', 0, 'WTT1074'),
+  (135, 15, 'Tire Patching', 0, 'WTT1084'),
+  (136, 12, 'Frame Welding', 1, 'WTT1094'),
+  (317, 14, 'Seat Adjustment', 0, 'WTT1004'),
+  (138, 2, 'Puncture Repair', 1, 'WTT1114'),
+  (139, 9, 'Handlebar Grips Replacement', 0, NULL),
+  (140, 5, 'Suspension Fork Repair', 1, 'WTT1116');
+
+INSERT INTO BOOKING (BookingID, CustomerID, BikeID, TotalPaid, ReturnStatus, ReturnReceivedBy, StartDate, EndDate, BookingType)
+VALUES
+  (101, 122, 1, 150, 'Returned', 'Gill Roller', '2023-05-01', '2023-05-04', 'WTT Booking'),
+  (102, 101, 6, 120, 'Hire still in progress', 'Tom Brady', '2023-06-15', '2023-06-20', 'Other Booking'),
+  (103, 120, 4, 90, 'Returned', 'Gill Roller', '2023-09-10', '2023-09-13', 'WTT Booking'),
+  (104, 102, 3, 360, 'Returned', 'Tom Brady', '2023-07-20', '2023-07-30', 'WTT Booking'),
+  (105, 119, 7, 100, 'Hire still in progress', 'Tom Brady', '2023-10-05', '2023-10-08', 'Other Booking'),
+  (106, 103, 6, 270, 'Returned', 'Gill Roller', '2023-05-20', '2023-05-22', 'WTT Booking'),
+  (107, 117, 11, 120, 'Hire still in progress', 'Tom Brady', '2023-06-03', '2023-06-06', 'Other Booking'),
+  (108, 106, 9, 90, 'Hire still in progress', 'John Wick', '2023-09-07', '2023-09-10', 'Other Booking'),
+  (109, 110, 12, 80, 'Returned', 'Tom Brady', '2023-10-10', '2023-10-12', 'WTT Booking'),
+  (110, 101, 8, 150, 'Returned', 'Gill Roller', '2023-07-12', '2023-07-15', 'Other Booking'),
+  (111, 107, 14, 50, 'Hire still in progress', 'Tom Brady', '2023-11-05', '2023-11-07', 'WTT Booking'),
+  (112, 108, 10, 200, 'Returned', 'John Wick', '2023-06-28', '2023-07-04', 'Other Booking'),
+  (113, 111, 6, 160, 'Hire still in progress', 'Tom Brady', '2023-05-05', '2023-05-11', 'Other Booking'),
+  (114, 115, 2, 120, 'Returned', 'Gill Roller', '2023-09-25', '2023-09-29', 'WTT Booking'),
+  (115, 112, 12, 360, 'Hire still in progress', 'John Wick', '2023-08-07', '2023-08-10', 'WTT Booking'),
+  (116, 102, 3, 70, 'Returned', 'Tom Brady', '2023-11-20', '2023-11-22', 'WTT Booking'),
+  (117, 114, 13, 210, 'Hire still in progress', 'John Wick', '2023-06-10', '2023-06-16', 'Other Booking'),
+  (118, 106, 5, 160, 'Returned', 'Tom Brady', '2023-10-15', '2023-10-19', 'WTT Booking'),
+  (119, 111, 3, 120, 'Returned', 'John Wick', '2023-07-24', '2023-07-29', 'Other Booking'),
+  (120, 104, 15, 120, 'Hire still in progress', 'Tom Brady', '2023-08-10', '2023-08-15', 'WTT Booking');
+
+INSERT INTO LOCATION (LocationID, BikeID, Date, PickUpLocation, ReturnLocation)
+VALUES
+  (1, 15, '2023-05-14', 'Eastbourne', 'Winchester'),
+  (2, 13, '2023-06-29', 'Winchester', 'Eastbourne'),
+  (3, 11, '2023-09-23', 'Winchester', 'Eastbourne'),
+  (4, 9, '2023-08-10', 'Eastbourne', 'Winchester'),
+  (5, 7, '2023-10-15', 'Winchester', 'Eastbourne'),
+  (6, 5, '2023-05-29', 'Eastbourne', 'Winchester'),
+  (7, 3, '2023-06-16', 'Eastbourne', 'Winchester'),
+  (8, 1, '2023-09-18', 'Winchester', 'Eastbourne'),
+  (9, 14, '2023-10-17', 'Winchester', 'Eastbourne'),
+  (10, 12, '2023-07-25', 'Eastbourne', 'Winchester'),
+  (11, 10, '2023-05-25', 'Eastbourne', 'Winchester'),
+  (12, 8, '2023-02-26', 'Winchester', 'Eastbourne'),
+  (13, 6, '2023-09-02', 'Eastbourne', 'Winchester'),
+  (14, 4, '2023-12-22', 'Winchester', 'Eastbourne'),
+  (15, 2, '2023-04-12', 'Eastbourne', 'Winchester'),
+  (16, 8, '2023-08-12', 'Winchester', 'Eastbourne'),
+  (17, 6, '2023-06-05', 'Winchester', 'Eastbourne'),
+  (18, 15, '2023-03-10', 'Eastbourne', 'Winchester'),
+  (19, 13, '2023-12-12', 'Winchester', 'Eastbourne'),
+  (20, 1, '2023-09-15', 'Eastbourne', 'Winchester');
+
